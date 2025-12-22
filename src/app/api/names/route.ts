@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
-const DISPLAY_COUNT = 30;
+const DISPLAY_COUNT = 20;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];

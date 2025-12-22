@@ -6,8 +6,8 @@ type Stage = "welcome" | "memorize" | "recall" | "result";
 type Performance = "fail" | "good" | "better" | "excellent";
 
 const TEST_DURATION = 60;
-const TARGET_COUNT = 20;
-const DISPLAY_COUNT = 30;
+const TARGET_COUNT = 15;
+const DISPLAY_COUNT = 20;
 
 const STATUS_RULES: { label: Performance; threshold: number; copy: string }[] = [
   {
@@ -45,7 +45,7 @@ const STAGE_DETAILS: Record<Stage, { title: string; subtitle: string }> = {
   welcome: {
     title: "Word Recall Sprint",
     subtitle:
-      "Enter your email to begin. You will see 30 unique names and must remember at least 20.",
+      "Welcome to this word recall test. You will see 20 words. You will then be asked to recall as many of those words as you can. Please enter your email to begin.",
   },
   memorize: {
     title: `Memorize ${DISPLAY_COUNT} Names`,
@@ -302,7 +302,7 @@ export default function Home() {
               </div>
               <div className="h-3 w-full overflow-hidden rounded-full bg-[#f0e4c3]">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#547236] via-[#d9c27d] to-[#f0e2b2] transition-all"
+                  className="h-full rounded-full bg-linear-to-r from-[#547236] via-[#d9c27d] to-[#f0e2b2] transition-all"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -324,7 +324,7 @@ export default function Home() {
               <label className="flex flex-col gap-2 text-base font-semibold text-[#3f4e2b]">
                 Names you remember
                 <textarea
-                  className="min-h-[220px] rounded-3xl border border-[#e8ddc2] bg-white px-5 py-4 text-base text-[#2f3d1f] outline-none transition focus:border-[#b09b69] focus:bg-[#fffef8]"
+                  className="min-h-55 rounded-3xl border border-[#e8ddc2] bg-white px-5 py-4 text-base text-[#2f3d1f] outline-none transition focus:border-[#b09b69] focus:bg-[#fffef8]"
                   placeholder="E.g. Nora, Miles, Selene, ..."
                   value={recallInput}
                   onChange={(event) => setRecallInput(event.target.value)}
