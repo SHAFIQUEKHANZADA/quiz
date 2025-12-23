@@ -306,7 +306,7 @@ export default function Home() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3">
                 {names.map((name) => (
                   <p
                     key={name}
