@@ -362,6 +362,12 @@ export default function Home() {
                   Status: {statusCopy.label}
                 </p>
                 <p className="text-base text-[#4f5c39]">{statusCopy.copy}</p>
+                <a
+                  href="https://mentalathlete.gg/products/pulse-nootropic?variant=50538101702958&selling_plan=692626391342"
+                  className="col-span-2 mt-6 block w-full rounded-2xl bg-[#2f4a21] px-6 py-4 text-center text-lg font-semibold text-[#fffbe9] shadow-[0_15px_30px_rgba(47,74,33,0.2)] transition hover:-translate-y-0.5"
+                >
+                  Get My Free Bottle
+                </a>
                 <p className="mt-6 text-sm text-[#8a9071]">
                   Resetting in ~5 seconds so you can rerun the drill.
                 </p>
