@@ -95,6 +95,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [poolSize, setPoolSize] = useState<number | null>(null);
   const [isFetchingNames, setIsFetchingNames] = useState(false);
+  const [isCalculatingResult, setIsCalculatingResult] = useState(false);
   const [isSavingResult, setIsSavingResult] = useState(false);
   const [persistenceError, setPersistenceError] = useState("");
   const [correctWords, setCorrectWords] = useState<string[]>([]);
@@ -141,7 +142,10 @@ export default function Home() {
     setPersistenceError("");
     setIsFetchingNames(true);
     try {
-      const response = await fetch("/api/names");
+      const [response] = await Promise.all([
+        fetch("/api/names"),
+        new Promise((resolve) => setTimeout(resolve, 2500)),
+      ]);
       if (!response.ok) {
         throw new Error(await response.text());
       }
@@ -162,12 +166,16 @@ export default function Home() {
     }
   };
 
-  const handleRecallSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleRecallSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!parsedAnswers.length) {
       setError("Add at least one name before submitting.");
       return;
     }
+
+    setIsCalculatingResult(true);
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+
     const reference = new Map(names.map((name) => [normalize(name), name]));
     const nextCorrect: string[] = [];
     const nextIncorrect: string[] = [];
@@ -197,6 +205,7 @@ export default function Home() {
     setIncorrectWords(nextIncorrect);
     setMissedWords(nextMissed);
     setError("");
+    setIsCalculatingResult(false);
     setStage("result");
     void persistResult(payload);
   };
@@ -341,9 +350,11 @@ export default function Home() {
               )}
               <button
                 type="submit"
-                className="w-full rounded-2xl bg-[#3e532c] px-6 py-4 text-lg font-semibold text-[#fffbe9] shadow-[0_15px_30px_rgba(62,83,44,0.25)] transition hover:-translate-y-0.5"
+                className="w-full rounded-2xl bg-[#3e532c] px-6 py-4 text-lg font-semibold text-[#fffbe9] shadow-[0_15px_30px_rgba(62,83,44,0.25)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isCalculatingResult}
+                aria-busy={isCalculatingResult}
               >
-                Submit answers
+                {isCalculatingResult ? "Calculating score..." : "Submit answers"}
               </button>
             </form>
           )}
