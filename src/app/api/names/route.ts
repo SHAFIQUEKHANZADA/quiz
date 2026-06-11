@@ -1,7 +1,75 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
 const DISPLAY_COUNT = 20;
+// Half the set is one-syllable, half is two-syllable, so every run has the
+// same memorization difficulty regardless of which words are drawn.
+const PER_SYLLABLE = DISPLAY_COUNT / 2;
+
+const ONE_SYLLABLE_WORDS = [
+  "chair",
+  "book",
+  "lamp",
+  "cloud",
+  "stone",
+  "bread",
+  "glass",
+  "train",
+  "leaf",
+  "hand",
+  "road",
+  "fish",
+  "moon",
+  "gate",
+  "shoe",
+  "clock",
+  "brick",
+  "flame",
+  "knife",
+  "branch",
+  "pearl",
+  "shield",
+  "plant",
+  "frost",
+  "drum",
+  "wheel",
+  "broom",
+  "crown",
+  "snake",
+  "storm",
+];
+
+const TWO_SYLLABLE_WORDS = [
+  "pillow",
+  "garden",
+  "candle",
+  "river",
+  "mirror",
+  "basket",
+  "tiger",
+  "planet",
+  "anchor",
+  "copper",
+  "hammer",
+  "jacket",
+  "ladder",
+  "monkey",
+  "pumpkin",
+  "rocket",
+  "saddle",
+  "temple",
+  "velvet",
+  "window",
+  "button",
+  "castle",
+  "dragon",
+  "engine",
+  "forest",
+  "harbor",
+  "island",
+  "lantern",
+  "magnet",
+  "needle",
+];
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -14,31 +82,25 @@ const shuffle = <T,>(items: T[]) => {
 
 export async function GET() {
   try {
-    const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase
-      .from("memory_names")
-      .select("name")
-      .eq("active", true);
+    const ones = shuffle(ONE_SYLLABLE_WORDS).slice(0, PER_SYLLABLE);
+    const twos = shuffle(TWO_SYLLABLE_WORDS).slice(0, PER_SYLLABLE);
+    const words = shuffle([...ones, ...twos]);
 
-    if (error) {
-      throw error;
-    }
-
-    const allNames = (data ?? []).map((row) => row.name).filter(Boolean);
-    const names = shuffle(allNames).slice(0, DISPLAY_COUNT);
-
-    if (names.length < DISPLAY_COUNT) {
+    if (words.length < DISPLAY_COUNT) {
       return NextResponse.json(
-        { error: "Not enough active names in memory_names table." },
+        { error: "Not enough words available to build the set." },
         { status: 422 }
       );
     }
 
-    return NextResponse.json({ names, poolSize: allNames.length });
+    return NextResponse.json({
+      names: words,
+      poolSize: ONE_SYLLABLE_WORDS.length + TWO_SYLLABLE_WORDS.length,
+    });
   } catch (error) {
     console.error("/api/names failure", error);
     return NextResponse.json(
-      { error: "Unable to load names from Supabase." },
+      { error: "Unable to load words." },
       { status: 500 }
     );
   }

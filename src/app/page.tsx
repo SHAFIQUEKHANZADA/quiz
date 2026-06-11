@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type Stage = "welcome" | "memorize" | "recall" | "result";
+type Stage = "welcome" | "instructions" | "memorize" | "recall" | "result";
 type Performance = "fail" | "good" | "better" | "excellent";
 
 const TEST_DURATION = 60;
@@ -47,14 +47,18 @@ const STAGE_DETAILS: Record<Stage, { title: string; subtitle: string }> = {
     subtitle:
       "Welcome to this word recall test. You will see 20 words. You will then be asked to recall as many of those words as you can. Please enter your email to begin.",
   },
+  instructions: {
+    title: "Before You Begin",
+    subtitle: "You will have 60 seconds to remember as many words as you can.",
+  },
   memorize: {
-    title: `Memorize ${DISPLAY_COUNT} Names`,
-    subtitle: "You have 60 seconds. Capture as many as you can.",
+    title: `Memorize ${DISPLAY_COUNT} Words`,
+    subtitle: "Remember as many as you can.",
   },
   recall: {
     title: "Recall Phase",
     subtitle:
-      "Type the names you remember, separated by commas or spaces. Order does not matter.",
+      "Type the words you remember, separated by commas or spaces. Order does not matter.",
   },
   result: {
     title: "Scoreboard",
@@ -129,7 +133,7 @@ export default function Home() {
     const timeout = window.setTimeout(() => {
       window.location.href =
         "https://mentalathlete.gg/products/pulse-nootropic?selling_plan=692626391342&variant=50538101702958";
-    }, 10000);
+    }, 30000);
     return () => window.clearTimeout(timeout);
   }, [stage]);
 
@@ -157,7 +161,7 @@ export default function Home() {
       setNames(pulledNames);
       setPoolSize(payload.poolSize ?? pulledNames.length);
       setRecallInput("");
-      setStage("memorize");
+      setStage("instructions");
     } catch (fetchError) {
       console.error("Failed to fetch names", fetchError);
       setError("Unable to load names right now. Please try again in a moment.");
@@ -298,6 +302,22 @@ export default function Home() {
             </div>
           )}
 
+          {stage === "instructions" && (
+            <div className="mt-8 flex flex-col gap-6">
+              <p className="text-base text-[#4f5c39]">
+                When you press Begin, {DISPLAY_COUNT} words will appear for 60
+                seconds. Remember as many as you can. You will then be asked to
+                recall as many as you can.
+              </p>
+              <button
+                className="w-full rounded-2xl bg-[#2f4a21] px-6 py-4 text-lg font-semibold text-[#fffbe9] shadow-[0_15px_30px_rgba(47,74,33,0.2)] transition hover:-translate-y-0.5"
+                onClick={() => setStage("memorize")}
+              >
+                Begin
+              </button>
+            </div>
+          )}
+
           {stage === "memorize" && (
             <div className="mt-8 flex flex-col gap-6">
               <div className="flex items-center justify-between text-sm font-semibold text-[#4b5b37]">
@@ -331,16 +351,16 @@ export default function Home() {
           {stage === "recall" && (
             <form className="mt-8 flex flex-col gap-6" onSubmit={handleRecallSubmit}>
               <label className="flex flex-col gap-2 text-base font-semibold text-[#3f4e2b]">
-                Names you remember
+                Words you remember
                 <textarea
                   className="min-h-55 rounded-3xl border border-[#e8ddc2] bg-white px-5 py-4 text-base text-[#2f3d1f] outline-none transition focus:border-[#b09b69] focus:bg-[#fffef8]"
-                  placeholder="E.g. Nora, Miles, Selene, ..."
+                  placeholder="E.g. chair, garden, cloud, ..."
                   value={recallInput}
                   onChange={(event) => setRecallInput(event.target.value)}
                 />
               </label>
               <div className="flex flex-wrap items-center justify-between gap-4 text-sm font-semibold text-[#6a7752]">
-                <span>{parsedAnswers.length} unique names typed</span>
+                <span>{parsedAnswers.length} unique words typed</span>
                 <span>Need {TARGET_COUNT} for a perfect score</span>
               </div>
               {error && (
